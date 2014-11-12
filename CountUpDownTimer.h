@@ -23,7 +23,7 @@ class CountUpDownTimer
 		  
 		  timeFlag = true;
 
-		  if (Clock == 0) // check to see if the clock is 0
+		  if (_type == DOWN && Clock == 0) // check to see if the clock is 0
 			Stop = true; // If so, stop the timer
 			
 		  _micro < time ? time = _micro : time += duration; // check to see if micros() has rolled over, if not, then increment "time" by duration
