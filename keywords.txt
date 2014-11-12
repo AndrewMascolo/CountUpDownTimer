@@ -1,0 +1,20 @@
+CountUpDownTimer	KEYWORD1
+
+Timer	KEYWORD2
+TimeHasChanged	KEYWORD2
+SetTimer	KEYWORD2
+StartTimer	KEYWORD2
+StopTimer	KEYWORD2
+StopTimerAt	KEYWORD2
+PauseTimer	KEYWORD2
+ResumeTimer	KEYWORD2
+ResetTimer	KEYWORD2
+TimeCheck	KEYWORD2
+ShowMicroSeconds	KEYWORD2
+ShowMilliSeconds	KEYWORD2
+ShowSeconds	KEYWORD2
+ShowMinutes	KEYWORD2
+ShowHours	KEYWORD2
+
+UP	LITERAL1
+DOWN	LITERAL1
