@@ -34,7 +34,10 @@ class CountUpDownTimer
 
 	void ResetTimer()
 	{
-	  _type? Count = 0: SetTimer(R_clock);
+	  if(_type) 
+	    Clock = 0;
+	  else
+	    SetTimer(R_clock);
 	  Stop = false;
 	}
 
