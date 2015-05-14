@@ -1,4 +1,10 @@
 /* Count Up/Down Timer */
+
+/*
+  Helpful Corrections by:
+	Github user Mannelito - Correction to ResumeTimer function
+*/
+
 #ifndef CountUpDownTimer_h
 #define CountUpDownTimer_h
 
@@ -83,6 +89,7 @@ class CountUpDownTimer
 	void ResumeTimer() // You can resume the timer if you ever stop it.
 	{
 	  Paused = false;
+	  time = micros();
 	}
 
 	void SetTimer(unsigned long hours, unsigned long minutes, unsigned long seconds)
@@ -155,7 +162,7 @@ class CountUpDownTimer
 	}
 	
     private:
-	    unsigned int STh, STm, STs;
+	    unsigned long STh, STm, STs;
 		unsigned long Watch, _micro, time;
 		unsigned long Clock, R_clock;
 		boolean Reset, Stop, Paused;
