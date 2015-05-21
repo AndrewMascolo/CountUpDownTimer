@@ -83,6 +83,7 @@ class CountUpDownTimer
 
 	void PauseTimer()
 	{
+	  time += micros();
 	  Paused = true;
 	}
 

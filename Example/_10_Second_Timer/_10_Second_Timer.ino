@@ -1,11 +1,12 @@
-#include<CountDownTimer.h>
+#include<CountUpDownTimer.h>
 
-CountDownTimer T;
+CountUpDownTimer T(DOWN);
 
 void setup()
 {
   Serial.begin(115200);
-  T.SetTimer(0,0,10);
+  pinMode(2, INPUT_PULLUP);
+  T.SetTimer(0,1,0);
   T.StartTimer();
 }
 
@@ -27,4 +28,8 @@ void loop()
     // This DOES NOT format the time to 0:0x when seconds is less than 10.
     // if you need to format the time to standard format, use the sprintf() function.
   }
+  if(digitalRead(2) == LOW)
+    T.PauseTimer();
+  else
+    T.ResumeTimer();
 }
