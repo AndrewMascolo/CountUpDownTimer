@@ -20,16 +20,19 @@ class CountUpDownTimer
 	  SetStopTime(0xFFFF); // 18h 12m 15s
 	  time = micros();
 	  Clock = 0;
-	  Reset = false, Stop = false, Paused = false;
+	  Reset = false, Stop = true, Paused = true;
 	  timeFlag = false;
+	  duration = 1000000;
 	}
 	
 	boolean Timer()
 	{
-	  static unsigned long duration = 1000000; // 1 second
 	  timeFlag = false;
 	  if (!Stop && !Paused) // if not Stopped or Paused, run timer
 	  {
+	    if(Paused)
+	      time = micros();
+		
 		if ((_micro = micros()) - time > duration ) // check the time difference and see if 1 second has elapsed
 		{
 		  _type == UP? Clock++ : Clock--;
@@ -39,15 +42,12 @@ class CountUpDownTimer
 		  if ((_type == DOWN && Clock == 0) || TimeCheck(STh, STm, STs)) // check to see if the clock is 0
 			Stop = true; // If so, stop the timer
 			
-		  time += duration;
+		  time = _micro;
 		  
 		  if(_micro < time) 
 		    time = 0;  // check to see if micros() has rolled over, if not, then increment "time" by duration
 		}
 	  }
-	  
-	  if(Paused)
-	    time += micros();
 		
 	  return !Stop; // return the state of the timer
 	}
@@ -83,7 +83,7 @@ class CountUpDownTimer
 
 	void PauseTimer()
 	{
-	  time += micros();
+	  time = micros();
 	  Paused = true;
 	}
 
@@ -163,6 +163,7 @@ class CountUpDownTimer
 	}
 	
     private:
+	    unsigned long duration;
 	    unsigned long STh, STm, STs;
 		unsigned long Watch, _micro, time;
 		unsigned long Clock, R_clock;
