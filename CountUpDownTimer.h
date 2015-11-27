@@ -151,15 +151,23 @@ class CountUpDownTimer
 	{
 	  return (_micro - Watch) + 1;
 	}
+	
+	unsigned long ShowTotalSeconds()
+	{
+	  return Clock;
+	}
 
 	boolean TimeHasChanged()
 	{
 	  return timeFlag;
 	}
-
-	boolean TimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals requested time
+    
+	boolean TimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals requested time or has passed it.
 	{
-	  return (hours == ShowHours() && minutes == ShowMinutes() && seconds == ShowSeconds());
+	  if(_type)
+	    return (hours >= ShowHours() && minutes >= ShowMinutes() && seconds >= ShowSeconds());
+	  else 
+	    return (hours <= ShowHours() && minutes <= ShowMinutes() && seconds <= ShowSeconds());
 	}
 	
     private:
