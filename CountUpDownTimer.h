@@ -22,7 +22,7 @@ class CountUpDownTimer
 	  Clock = 0;
 	  Reset = false, Stop = true, Paused = true;
 	  timeFlag = false;
-	  duration = 1000000;
+	  duration = 1000000UL;
 	}
 	
 	boolean Timer()
@@ -33,13 +33,12 @@ class CountUpDownTimer
 	    if(Paused)
 	      time = micros();
 		
-		if ((_micro = micros()) - time > duration ) // check the time difference and see if 1 second has elapsed
+		if (((_micro = micros()) - time) > duration ) // check the time difference and see if 1 second has elapsed
 		{
 		  _type == UP? Clock++ : Clock--;
-			
 		  timeFlag = true;
 
-		  if ((_type == DOWN && Clock == 0) || TimeCheck(STh, STm, STs)) // check to see if the clock is 0
+		  if (((_type == DOWN) && (Clock == 0)) || TimeCheck(STh, STm, STs)) // check to see if the clock is 0
 			Stop = true; // If so, stop the timer
 			
 		  time = _micro;
@@ -96,9 +95,9 @@ class CountUpDownTimer
 	void SetTimer(unsigned long hours, unsigned long minutes, unsigned long seconds)
 	{
 	  // This handles invalid time overflow ie 1(H), 0(M), 120(S) -> 1h, 2m, 0s
-	  unsigned int _S = (seconds / 60), _M = (minutes / 60);
-	  if(_S) minutes += _S;
-	  if(_M) hours += _M;
+	  unsigned int Sec = (seconds / 60), Min = (minutes / 60);
+	  if(Sec) minutes += Sec;
+	  if(Min) hours += Min;
 	  
 	  Clock = (hours * 3600) + (minutes * 60) + (seconds % 60);
 	  R_clock = Clock;
@@ -165,9 +164,9 @@ class CountUpDownTimer
 	boolean TimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals requested time or has passed it.
 	{
 	  if(_type)
-	    return (hours >= ShowHours() && minutes >= ShowMinutes() && seconds >= ShowSeconds());
+	    return ((hours <= ShowHours()) && (minutes <= ShowMinutes()) && (seconds <= ShowSeconds()));
 	  else 
-	    return (hours <= ShowHours() && minutes <= ShowMinutes() && seconds <= ShowSeconds());
+	    return ((hours >= ShowHours()) && (minutes >= ShowMinutes()) && (seconds >= ShowSeconds()));
 	}
 	
     private:
