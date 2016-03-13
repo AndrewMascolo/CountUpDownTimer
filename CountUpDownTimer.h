@@ -163,7 +163,7 @@ class CountUpDownTimer
     
 	boolean TimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals requested time or has passed it.
 	{
-	  if(_type)
+	  if(!_type)
 	    return ((hours <= ShowHours()) && (minutes <= ShowMinutes()) && (seconds <= ShowSeconds()));
 	  else 
 	    return ((hours >= ShowHours()) && (minutes >= ShowMinutes()) && (seconds >= ShowSeconds()));
