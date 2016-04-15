@@ -62,7 +62,7 @@ class CountUpDownTimer
 		  _type == UP? Clock++ : Clock--;
 		  timeFlag = true;
 
-		  if (((_type == DOWN) && (Clock == 0)) || TimeCheck(STh, STm, STs)) // check to see if the clock is 0
+		  if (((_type == DOWN) && (Clock == 0)) || (_type == UP && TimeCheck(STh, STm, STs))) // check to see if the clock is 0
 			Stop = true; // If so, stop the timer
 			
 		  time = _micro;
