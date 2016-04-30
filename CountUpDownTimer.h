@@ -1,6 +1,10 @@
 /* Count Up/Down Timer */
 
 /*
+  Helpful Corrections by:
+	Github user Mannelito - Correction to ResumeTimer function
+*/
+/*
 The MIT License (MIT)
 
 Copyright (c) 2016 Andrew Mascolo Jr
@@ -22,11 +26,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
 
-/*
-  Helpful Corrections by:
-	Github user Mannelito - Correction to ResumeTimer function
 */
 
 #ifndef CountUpDownTimer_h
@@ -41,12 +41,12 @@ class CountUpDownTimer
   public:
     CountUpDownTimer(bool type) : _type(type)
 	{ 
-	  SetStopTime(0xFFFF); // 18h 12m 15s
+	  SetStopTime((type? 0xFFFF : 0)); // 18h 12m 15s
 	  time = micros();
 	  Clock = 0;
 	  Reset = false, Stop = true, Paused = true;
 	  timeFlag = false;
-	  duration = 1000000UL;
+	  duration = 1000000;
 	}
 	
 	boolean Timer()
@@ -57,12 +57,13 @@ class CountUpDownTimer
 	    if(Paused)
 	      time = micros();
 		
-		if (((_micro = micros()) - time) > duration ) // check the time difference and see if 1 second has elapsed
+		if ((_micro = micros()) - time > duration ) // check the time difference and see if 1 second has elapsed
 		{
 		  _type == UP? Clock++ : Clock--;
+			
 		  timeFlag = true;
 
-		  if (((_type == DOWN) && (Clock == 0)) || TimeCheck(STh, STm, STs)) // check to see if the clock is 0
+		  if ((_type == DOWN && Clock == 0) || TimeCheck()) // check to see if the clock is 0
 			Stop = true; // If so, stop the timer
 			
 		  time = _micro;
@@ -119,9 +120,9 @@ class CountUpDownTimer
 	void SetTimer(unsigned long hours, unsigned long minutes, unsigned long seconds)
 	{
 	  // This handles invalid time overflow ie 1(H), 0(M), 120(S) -> 1h, 2m, 0s
-	  unsigned int Sec = (seconds / 60), Min = (minutes / 60);
-	  if(Sec) minutes += Sec;
-	  if(Min) hours += Min;
+	  unsigned int _S = (seconds / 60), _M = (minutes / 60);
+	  if(_S) minutes += _S;
+	  if(_M) hours += _M;
 	  
 	  Clock = (hours * 3600) + (minutes * 60) + (seconds % 60);
 	  R_clock = Clock;
@@ -141,6 +142,7 @@ class CountUpDownTimer
 	  STh = seconds / 3600;
 	  STm = (seconds / 60) % 60;
 	  STs = seconds % 60;
+	  STotaltime = seconds;
 	}
 	
 	void SetStopTime(unsigned long hours, unsigned long minutes, unsigned long seconds)
@@ -148,6 +150,7 @@ class CountUpDownTimer
       STh = hours;
 	  STm = minutes;
 	  STs = seconds;
+	  STotaltime = (hours * 3600) + (minutes * 60) + (seconds % 60);
 	}
 
 	unsigned long ShowHours()
@@ -179,6 +182,11 @@ class CountUpDownTimer
 	{
 	  return Clock;
 	}
+	
+	unsigned long ShowStopTime()
+	{
+	  return STotaltime;
+	}
 
 	boolean TimeHasChanged()
 	{
@@ -187,15 +195,24 @@ class CountUpDownTimer
     
 	boolean TimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals requested time or has passed it.
 	{
-	  if(!_type)
-	    return ((hours <= ShowHours()) && (minutes <= ShowMinutes()) && (seconds <= ShowSeconds()));
-	  else 
-	    return ((hours >= ShowHours()) && (minutes >= ShowMinutes()) && (seconds >= ShowSeconds()));
+	  unsigned long TC = ((hours * 3600) + (minutes * 60) + (seconds % 60));
+	  if(_type)
+	    return (Clock >= TC);
+	  else  
+	    return (Clock <= TC );
+	}
+	
+	boolean TimeCheck() // output true if timer equals requested time or has passed it.
+	{
+	  if(_type)
+	    return Clock >= STotaltime;
+	  else  
+	    return Clock <= STotaltime;  
 	}
 	
     private:
 	    unsigned long duration;
-	    unsigned long STh, STm, STs;
+	    unsigned long STh, STm, STs, STotaltime;
 		unsigned long Watch, _micro, time;
 		unsigned long Clock, R_clock;
 		boolean Reset, Stop, Paused;

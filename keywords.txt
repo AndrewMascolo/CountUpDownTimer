@@ -6,6 +6,7 @@ SetTimer	KEYWORD2
 StartTimer	KEYWORD2
 StopTimer	KEYWORD2
 StopTimerAt	KEYWORD2
+SetStopTime	KEYWORD2
 PauseTimer	KEYWORD2
 ResumeTimer	KEYWORD2
 ResetTimer	KEYWORD2
@@ -16,6 +17,7 @@ ShowSeconds	KEYWORD2
 ShowMinutes	KEYWORD2
 ShowHours	KEYWORD2
 ShowTotalSeconds	KEYWORD2
+ShowStopTime	KEYWORD2
 
 UP	LITERAL1
 DOWN	LITERAL1
