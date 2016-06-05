@@ -210,14 +210,20 @@ class CountUpDownTimer
 	    return Clock <= STotaltime;  
 	}
 	
+	boolean ExactTimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals the exact requested time.
+	{
+	  unsigned long TC = ((hours * 3600) + (minutes * 60) + (seconds % 60));
+	  return Clock == TC;
+	}
+	
     private:
 	    unsigned long duration;
 	    unsigned long STh, STm, STs, STotaltime;
-		unsigned long Watch, _micro, time;
-		unsigned long Clock, R_clock;
-		boolean Reset, Stop, Paused;
-		volatile boolean timeFlag;
-		bool _type;
+	    unsigned long Watch, _micro, time;
+	    unsigned long Clock, R_clock;
+	    boolean Reset, Stop, Paused;
+	    volatile boolean timeFlag;
+	    bool _type;
 };
 
 #endif
