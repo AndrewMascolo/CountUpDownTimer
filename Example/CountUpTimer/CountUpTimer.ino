@@ -1,6 +1,6 @@
 #include<CountUpDownTimer.h>
 
-CountUpDownTimer T(UP);
+CountUpDownTimer T(UP, HIGH); // Default precision is HIGH, but you can change it to also be LOW
 
 void setup()
 {
