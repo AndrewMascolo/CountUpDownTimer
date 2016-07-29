@@ -1,0 +1,12 @@
+{
+  "name": "CountUpDownTimer",
+  "keywords": "timer, counter",
+  "description": "Simple Count Up/Down Timer",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/AndrewMascolo/CountUpDownTimer.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "*"
+}
