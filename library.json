@@ -2,6 +2,7 @@
   "name": "CountUpDownTimer",
   "keywords": "timer, counter",
   "description": "Simple Count Up/Down Timer",
+  "examples": "Example/*/*.ino",
   "repository":
   {
     "type": "git",
