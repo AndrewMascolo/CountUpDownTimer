@@ -124,9 +124,9 @@ class CountUpDownTimer
 	void SetTimer(unsigned long hours, unsigned long minutes, unsigned long seconds)
 	{
 	  // This handles invalid time overflow ie 1(H), 0(M), 120(S) -> 1h, 2m, 0s
-	  unsigned int _S = (seconds / 60), _M = (minutes / 60);
-	  if(_S) minutes += _S;
-	  if(_M) hours += _M;
+	  unsigned int Secs = (seconds / 60), Mins = (minutes / 60);
+	  if(Secs) minutes += Secs;
+	  if(Mins) hours += Mins;
 	  
 	  Clock = (hours * 3600) + (minutes * 60) + (seconds % 60);
 	  R_clock = Clock;
