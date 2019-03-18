@@ -97,6 +97,10 @@ class CountUpDownTimer
 	  if(_type == UP) 
 	    Clock = 0;
 	}
+	
+	boolean isTimerRunning() {
+		return !Paused && !Stop
+	}
 
 	void StopTimer()
 	{
