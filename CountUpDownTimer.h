@@ -99,7 +99,7 @@ class CountUpDownTimer
 	}
 	
 	boolean isTimerRunning() {
-		return !Paused && !Stop
+		return !Paused && !Stop;
 	}
 
 	void StopTimer()
