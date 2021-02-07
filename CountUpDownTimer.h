@@ -38,200 +38,189 @@ SOFTWARE.
 
 class CountUpDownTimer
 {
-  public:
-        CountUpDownTimer(bool type, bool precision = HIGH) : _type(type), _precision(precision)
-	{ 
-	  SetStopTime((type? 0xFFFF : 0)); // 18h 12m 15s
-	  time = precision ? micros() : millis();
-	  Clock = 0;
-	  Reset = false, Stop = true, Paused = true;
-	  timeFlag = false;
-	  duration = precision ? 1000000 : 1000;
-	}
-	unsigned long _InternalClock()
-	{
-	  return _precision ? micros() : millis();
+	public:
+    CountUpDownTimer(bool type, bool precision = HIGH) : _type(type), _precision(precision) { 
+		SetStopTime((type? 0xFFFFFFFF : 0)); // 18h 12m 15s
+		time = precision ? micros() : millis();
+		remainingSeconds = 0;
+		reset = false, stop = true, paused = true;
+		timeFlag = false;
+		duration = precision ? 1000000 : 1000;
 	}
 	
-	boolean Timer()
-	{
-	  timeFlag = false;
-	  if (!Stop && !Paused) // if not Stopped or Paused, run timer
-	  {
-	    if(Paused)
-	      time = _InternalClock();
-		
-		if ((_intTime = _InternalClock() ) - time > duration ) // check the time difference and see if 1 second has elapsed
-		{
-		  _type == UP? Clock++ : Clock--;
-			
-		  timeFlag = true;
-
-		  if ((_type == DOWN && Clock == 0) || TimeCheck()) // check to see if the clock is 0
-			Stop = true; // If so, stop the timer
-			
-		  time = _intTime;
-		  
-		  if(_intTime < time) 
-		    time = 0;  // check to see if micros() has rolled over, if not, then increment "time" by duration
-		}
-	  }
-		
-	  return !Stop; // return the state of the timer
-	}
-
-	void ResetTimer()
-	{
-	  if(_type) 
-	    Clock = 0;
-	  else
-	    SetTimer(R_clock);
-	  Stop = false;
-	}
-
-	void StartTimer()
-	{
-	  Watch = _InternalClock();
-	  Stop = false;
-	  Paused = false;
-	  if(_type == UP) 
-	    Clock = 0;
+	unsigned long _InternalClock() {
+		return _precision ? micros() : millis();
 	}
 	
-	boolean isTimerRunning() {
-		return !Paused && !Stop;
-	}
-
-	void StopTimer()
-	{
-	  Stop = true;
-	}
-
-	void StopTimerAt(unsigned long hours, unsigned long minutes, unsigned long seconds)
-	{
-	  if (TimeCheck(hours, minutes, seconds) )
-		Stop = true;
-	}
-
-	void PauseTimer()
-	{
-	  time = _InternalClock();
-	  Paused = true;
-	}
-
-	void ResumeTimer() // You can resume the timer if you ever stop it.
-	{
-	  Paused = false;
-	  time = _InternalClock();
-	}
-
-	void SetTimer(unsigned long hours, unsigned long minutes, unsigned long seconds)
-	{
-	  // This handles invalid time overflow ie 1(H), 0(M), 120(S) -> 1h, 2m, 0s
-	  unsigned int Secs = (seconds / 60), Mins = (minutes / 60);
-	  if(Secs) minutes += Secs;
-	  if(Mins) hours += Mins;
+	void Timer() {
+		timeFlag = false;
 	  
-	  Clock = (hours * 3600) + (minutes * 60) + (seconds % 60);
-	  R_clock = Clock;
-	  Stop = false;
+		if (stop == true) { return; }
+		if (paused == true) { time = _InternalClock(); return; }
+	      
+		if ((_intTime = _InternalClock() ) - time >= duration ) { // check the time difference and see if 1 second has elapsed
+			_type == UP? remainingSeconds++ : remainingSeconds--;
+			
+			timeFlag = true;
+
+			if ((_type == DOWN && remainingSeconds == 0) || TimeCheck()) // check to see if the clock is 0
+				stop = true; // If so, stop the timer
+			
+			time = _intTime;
+		  
+			if(_intTime < time) 
+				time = 0;  // check to see if micros() has rolled over, if not, then increment "time" by duration
+		}
 	}
 
-	void SetTimer(unsigned long seconds)
-	{
-	 // StartTimer(seconds / 3600, (seconds / 3600) / 60, seconds % 60);
-	  Clock = seconds;
-	  R_clock = Clock;
-	  Stop = false;
+	void ResetTimer() {
+		if(_type) 
+			remainingSeconds = 0;
+		else
+			SetTimer(resetClockSeconds);
+		
+		stop = false;
+	}
+
+	void StartTimer() {
+		watch = _InternalClock();
+		stop = false;
+		paused = false;
+		if(_type == UP) 
+			remainingSeconds = 0;
+	}
+
+	void StopTimer() {
+		stop = true;
+	}
+
+	void StopTimerAt(unsigned long days, unsigned long hours, unsigned long minutes, unsigned long seconds) {
+		if (TimeCheck(days, hours, minutes, seconds) )
+			stop = true;
+	}
+
+	void PauseTimer() {
+		time = _InternalClock();
+		paused = true;
+	}
+
+	void ResumeTimer() { // You can resume the timer if you ever stop it.
+		paused = false;
+		time = _InternalClock();
+	}
+
+	void SetTimer(unsigned long days, unsigned long hours, unsigned long minutes, unsigned long seconds) {
+	  // This handles invalid time overflow ie 1(H), 0(M), 120(S) -> 1h, 2m, 0s
+		unsigned int _S = (seconds / 60), _M = (minutes / 60);
+		if(_S > 0) minutes += _S;
+		if(_M > 0) hours += _M;
+		if (days > 0) { hours += days * 24; }
+	  
+		remainingSeconds = (hours * 3600) + (minutes * 60) + (seconds % 60);
+		resetClockSeconds = remainingSeconds;
+		stop = false;
+	}
+
+	void SetTimer(unsigned long seconds) {
+		// StartTimer(seconds / 3600, (seconds / 3600) / 60, seconds % 60);
+		remainingSeconds = seconds;
+		resetClockSeconds = remainingSeconds;
+		stop = false;
 	}
 	
-	void SetStopTime(unsigned long seconds)
-	{
-	  STh = seconds / 3600;
-	  STm = (seconds / 60) % 60;
-	  STs = seconds % 60;
-	  STotaltime = seconds;
+	void SetStopTime(unsigned long seconds) {
+		stopTimeHour = seconds / 3600;
+		stopTimeMinute = (seconds / 60) % 60;
+		stopTimeSecond = seconds % 60;
+		stopTimeTotalTime = seconds;
 	}
 	
-	void SetStopTime(unsigned long hours, unsigned long minutes, unsigned long seconds)
-	{
-          STh = hours;
-	  STm = minutes;
-	  STs = seconds;
-	  STotaltime = (hours * 3600) + (minutes * 60) + (seconds % 60);
+	void SetStopTime(unsigned long days, unsigned long hours, unsigned long minutes, unsigned long seconds) {
+		if (days > 0) { hours += days * 24; }
+	
+		stopTimeHour = hours;
+		stopTimeMinute = minutes;
+		stopTimeSecond = seconds;
+		stopTimeTotalTime = (hours * 3600) + (minutes * 60) + (seconds % 60);
 	}
 
-	unsigned long ShowHours()
-	{
-	  return Clock / 3600;
-	}
-
-	unsigned long ShowMinutes()
-	{
-	  return (Clock / 60) % 60;
-	}
-
-	unsigned long ShowSeconds()
-	{
-	  return Clock % 60;
-	}
-
-	unsigned long ShowMilliSeconds()
-	{
-	  if (_precision == HIGH)
-	    return ((_intTime - Watch)/ 1000.0) + 1;
-	  else
-	    return (_intTime - Watch) + 1;
-	}
-
-	unsigned long ShowMicroSeconds()
-	{
-	  if (_precision == LOW)
-	    return ((_intTime - Watch)/ 1000.0) + 1;
-	  else
-	    return (_intTime - Watch) + 1;
+	unsigned long ShowDays() {
+		return ShowHours() / 24;
 	}
 	
-	unsigned long ShowTotalSeconds()
-	{
-	  return Clock;
-	}
-	
-	unsigned long ShowStopTime()
-	{
-	  return STotaltime;
+	unsigned long ShowHours() {
+		return remainingSeconds / 3600;
 	}
 
-	boolean TimeHasChanged()
-	{
-	  return timeFlag;
+	unsigned long ShowMinutes() {
+		return (remainingSeconds / 60) % 60;
+	}
+
+	unsigned long ShowSeconds() {
+		return remainingSeconds % 60;
+	}
+	
+	unsigned long rawClock() {
+		return remainingSeconds;
+	}
+
+	unsigned long ShowMilliSeconds() {
+		if (_precision == HIGH)
+			if (_type == true)
+				return ((_intTime - watch)/ 1000) + 1;
+			else 
+				return rawClock() * 1000;
+		else
+			if (_type == true)
+				return (_intTime - watch) + 1;
+			else 
+				return resetClockSeconds - (_intTime - watch);
+	}
+
+	unsigned long ShowMicroSeconds() {
+		if (_precision == HIGH)
+			return (_intTime - watch) + 1;
+		else	
+			return ((_intTime - watch)/ 1000.0) + 1;
+	}
+	
+	unsigned long ShowTotalSeconds() {
+		return remainingSeconds;
+	}
+	
+	unsigned long ShowStopTime() {
+		return stopTimeTotalTime;
+	}
+
+	boolean TimeHasChanged() {
+		return timeFlag;
 	}
     
-	boolean TimeCheck(unsigned int hours, unsigned int minutes, unsigned int seconds) // output true if timer equals requested time or has passed it.
-	{
-	  unsigned long TC = ((hours * 3600) + (minutes * 60) + (seconds % 60));
-	  if(_type)
-	    return (Clock >= TC);
-	  else  
-	    return (Clock <= TC);
+	boolean TimeCheck(unsigned int days, unsigned int hours, unsigned int minutes, unsigned int seconds) { // output true if timer equals requested time or has passed it.
+		if (days > 0) { hours += days * 24; }
+	
+		unsigned long TC = ((hours * 3600) + (minutes * 60) + (seconds % 60));
+		if(_type)
+			return (remainingSeconds >= TC);
+		else  
+			return (remainingSeconds <= TC);
 	}
 	
-	boolean TimeCheck() // output true if timer equals requested time or has passed it.
-	{
-	  if(_type)
-	    return Clock >= STotaltime;
-	  else  
-	    return Clock <= STotaltime;  
+	boolean TimeCheck() { // output true if timer equals requested time or has passed it.
+		if(_type)
+			return remainingSeconds >= stopTimeTotalTime;
+		else  
+			return remainingSeconds <= stopTimeTotalTime;  
 	}
 	
     private:
 	    unsigned long duration;
-	    unsigned long STh, STm, STs, STotaltime;
-	    unsigned long Watch, _intTime, time;
-            unsigned long Clock, R_clock;
-	    boolean Reset, Stop, Paused;
-	    volatile boolean timeFlag;
-	    bool _type, _precision;
+	    unsigned long stopTimeHour, stopTimeMinute, stopTimeSecond, stopTimeTotalTime;
+		unsigned long watch, _intTime, time;
+		unsigned long remainingSeconds, resetClockSeconds;
+		boolean reset, stop, paused;
+		volatile boolean timeFlag;
+		bool _type, _precision;
 };
 
 #endif
