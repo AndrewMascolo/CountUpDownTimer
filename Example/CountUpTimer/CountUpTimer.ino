@@ -5,8 +5,8 @@ CountUpDownTimer T(UP, HIGH); // Default precision is HIGH, but you can change i
 void setup()
 {
   Serial.begin(115200);
-  //T.SetTimer(0,0,20);     //start at 1 minute (USE FOR: DOWN ONLY)
-  T.SetStopTime(0,0,30); // stop at 10 seconds (USE FOR: UP/DOWN)
+  //T.SetTimer(0,0,0,20);     //start at 1 minute (USE FOR: DOWN ONLY)
+  T.SetStopTime(0,0,0,30); // stop at 10 seconds (USE FOR: UP/DOWN)
   T.StartTimer();
 }
 
