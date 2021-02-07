@@ -16,6 +16,7 @@ ShowMilliSeconds	KEYWORD2
 ShowSeconds	KEYWORD2
 ShowMinutes	KEYWORD2
 ShowHours	KEYWORD2
+ShowDays	KEYWORD2
 ShowTotalSeconds	KEYWORD2
 ShowStopTime	KEYWORD2
 
