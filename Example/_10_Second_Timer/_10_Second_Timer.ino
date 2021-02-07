@@ -6,7 +6,7 @@ void setup()
 {
   Serial.begin(115200);
   pinMode(2, INPUT_PULLUP);
-  T.SetTimer(0,1,0);
+  T.SetTimer(0,0,0,10);
   T.StartTimer();
 }
 
