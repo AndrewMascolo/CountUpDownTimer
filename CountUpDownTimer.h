@@ -88,6 +88,8 @@ class CountUpDownTimer
 		paused = false;
 		if(_type == UP) 
 			remainingSeconds = 0;
+		else 
+			SetStopTime(0,0,0,0);
 	}
 
 	void StopTimer() {
