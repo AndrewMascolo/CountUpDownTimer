@@ -39,7 +39,7 @@ SOFTWARE.
 class CountUpDownTimer
 {
 	public:
-    CountUpDownTimer(bool type, bool precision = HIGH) : _type(type), _precision(precision) { 
+    	CountUpDownTimer(bool type, bool precision = HIGH) : _type(type), _precision(precision) { 
 		SetStopTime((type? 0xFFFFFFFF : 0)); // 18h 12m 15s
 		time = precision ? micros() : millis();
 		remainingSeconds = 0;
@@ -113,9 +113,11 @@ class CountUpDownTimer
 
 	void SetTimer(unsigned long days, unsigned long hours, unsigned long minutes, unsigned long seconds) {
 	  // This handles invalid time overflow ie 1(H), 0(M), 120(S) -> 1h, 2m, 0s
-		unsigned int _S = (seconds / 60), _M = (minutes / 60);
-		if(_S > 0) minutes += _S;
-		if(_M > 0) hours += _M;
+		unsigned int sRes = (seconds / 60);
+		unsigned int mRes = (minutes / 60);
+		
+		if(sRes > 0) minutes += sRes;
+		if(mRes > 0) hours += mRes;
 		if (days > 0) { hours += days * 24; }
 	  
 		remainingSeconds = (hours * 3600) + (minutes * 60) + (seconds % 60);
@@ -216,13 +218,13 @@ class CountUpDownTimer
 	}
 	
     private:
-	    unsigned long duration;
-	    unsigned long stopTimeHour, stopTimeMinute, stopTimeSecond, stopTimeTotalTime;
-		unsigned long watch, _intTime, time;
-		unsigned long remainingSeconds, resetClockSeconds;
-		boolean reset, stop, paused;
-		volatile boolean timeFlag;
-		bool _type, _precision;
+	unsigned long duration;
+	unsigned long stopTimeHour, stopTimeMinute, stopTimeSecond, stopTimeTotalTime;
+	unsigned long watch, _intTime, time;
+	unsigned long remainingSeconds, resetClockSeconds;
+	boolean reset, stop, paused;
+	volatile boolean timeFlag;
+	bool _type, _precision;
 };
 
 #endif
